@@ -1,0 +1,19 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64" # Puedes cambiar la imagen si prefieres otra distribución
+
+  config.vm.network "private_network", ip: "192.168.56.10"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "512"
+    vb.cpus = 1
+  end
+
+  config.vm.synced_folder "./html", "/var/www/html", owner: "www-data", group: "www-data", mount_options: ["dmode=775", "fmode=664"]
+
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y apache2
+    systemctl enable apache2
+    systemctl restart apache2
+  SHELL
+end
